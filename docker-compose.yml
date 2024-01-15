@@ -1,0 +1,18 @@
+version: '3'
+
+services:
+  rest_service:
+    build: rest-service
+    image: rest_service
+    container_name: rest_service 
+    ports:
+     - 8080:8080
+
+  rabbitmq:
+    image: "rabbitmq:3.8"
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: "joe"
+      RABBITMQ_DEFAULT_PASS: "mama"
