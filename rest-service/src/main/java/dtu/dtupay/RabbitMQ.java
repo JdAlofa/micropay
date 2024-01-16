@@ -10,6 +10,7 @@ public class RabbitMQ implements AutoCloseable {
 	private final static String EXCHANGE_NAME = "hello";
 	private final Channel channel;
 	private final Connection connection;
+	private String queueName;
 
 	public RabbitMQ() throws Exception {
 		ConnectionFactory factory = new ConnectionFactory();
@@ -23,22 +24,13 @@ public class RabbitMQ implements AutoCloseable {
 		this.channel = connection.createChannel();
 
 		channel.exchangeDeclare(EXCHANGE_NAME, "fanout");
-		String queueName = channel.queueDeclare().getQueue();
+		queueName = channel.queueDeclare().getQueue();
 		channel.queueBind(queueName, EXCHANGE_NAME, "");
+	}
 
-		DefaultConsumer consumer = new DefaultConsumer(channel) {
-			@Override
-			public void handleDelivery(
-					String consumerTag,
-					Envelope envelope,
-					AMQP.BasicProperties properties,
-					byte[] body) throws IOException {
-
-				String message = new String(body, "UTF-8");
-				System.out.println("Consumed: " + message);
-			}
-		};
-		channel.basicConsume(queueName, true, consumer);
+	public void setEventCallback(DeliverCallback callback) throws IOException {
+		channel.basicConsume(queueName, true, callback, consumerTag -> {
+		});
 	}
 
 	public void sendMessage(String message) throws Exception {
@@ -58,6 +50,11 @@ public class RabbitMQ implements AutoCloseable {
 
 	public static void main(String[] args) throws Exception {
 		try (RabbitMQ rabbitMQ = new RabbitMQ()) {
+
+			rabbitMQ.setEventCallback((consumerTag, delivery) -> {
+				String receivedMessage = new String(delivery.getBody(), "UTF-8");
+				System.out.println(" [x] Received '" + receivedMessage + "'");
+			});
 
 			rabbitMQ.sendMessage("hello");
 			System.in.read();
