@@ -29,7 +29,7 @@ public class CustomerRegistrationSteps {
 		User user = new User();
 		user.setFirstName("Graig");
 		user.setLastName("Davis");
-		user.setCprNumber("12sdfsawekerjwsfsdfasdfedfl442");
+		user.setCprNumber("2039sdsdf4823094sdjfhskdf");
 		client = new CustomerClient(
 				new Customer(bankService.createAccountWithBalance(user, BigDecimal.valueOf(400))));
 	}

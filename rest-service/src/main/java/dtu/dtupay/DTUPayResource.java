@@ -19,6 +19,13 @@ public class DTUPayResource {
 
 	private DTUPayService dtuPayService = new DTUPayService();
 
+	@POST
+	@Path("/hellorabbit/{msg}")
+	@Produces(MediaType.TEXT_PLAIN)
+	public Response helloRabbit(@PathParam("msg") String msg) {
+		return Response.ok(msg, MediaType.TEXT_PLAIN).build();
+	}
+
 	@GET
 	@Path("/customers")
 	@Produces(MediaType.APPLICATION_JSON)

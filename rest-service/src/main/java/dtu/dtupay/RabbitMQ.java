@@ -1,41 +1,66 @@
+
 package dtu.dtupay;
 
-import com.rabbitmq.client.Connection;
-import com.rabbitmq.client.ConnectionFactory;
-import com.rabbitmq.client.Channel;
+import java.io.IOException;
 
-public class RabbitMQ {
+import com.rabbitmq.client.*;
 
-	private final static String QUEUE_NAME = "hello";
+public class RabbitMQ implements AutoCloseable {
+
+	private final static String EXCHANGE_NAME = "hello";
+	private final Channel channel;
+	private final Connection connection;
+
+	public RabbitMQ() throws Exception {
+		ConnectionFactory factory = new ConnectionFactory();
+		factory.setHost("localhost");
+		factory.setPort(5672);
+		factory.setUsername("joe");
+		factory.setPassword("mama");
+		factory.setVirtualHost("/");
+
+		this.connection = factory.newConnection();
+		this.channel = connection.createChannel();
+
+		channel.exchangeDeclare(EXCHANGE_NAME, "fanout");
+		String queueName = channel.queueDeclare().getQueue();
+		channel.queueBind(queueName, EXCHANGE_NAME, "");
+
+		DefaultConsumer consumer = new DefaultConsumer(channel) {
+			@Override
+			public void handleDelivery(
+					String consumerTag,
+					Envelope envelope,
+					AMQP.BasicProperties properties,
+					byte[] body) throws IOException {
+
+				String message = new String(body, "UTF-8");
+				System.out.println("Consumed: " + message);
+			}
+		};
+		channel.basicConsume(queueName, true, consumer);
+	}
+
+	public void sendMessage(String message) throws Exception {
+		channel.basicPublish(EXCHANGE_NAME, "", null, message.getBytes());
+		System.out.println("Sent: " + message + "'");
+	}
+
+	@Override
+	public void close() {
+		try {
+			channel.close();
+			connection.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 
 	public static void main(String[] args) throws Exception {
-		// Connection settings
-		String host = "localhost";
-		int port = 5672;
-		String username = "your_username";
-		String password = "your_password";
-		String virtualHost = "/";
+		try (RabbitMQ rabbitMQ = new RabbitMQ()) {
 
-		// Create a connection factory
-		ConnectionFactory factory = new ConnectionFactory();
-		factory.setHost(host);
-		factory.setPort(port);
-		factory.setUsername(username);
-		factory.setPassword(password);
-		factory.setVirtualHost(virtualHost);
-
-		try (Connection connection = factory.newConnection();
-				Channel channel = connection.createChannel()) {
-
-			// Declare a queue
-			channel.queueDeclare(QUEUE_NAME, false, false, false, null);
-
-			// Message to send
-			String message = "Hello, RabbitMQ!";
-
-			// Publish the message to the queue
-			channel.basicPublish("", QUEUE_NAME, null, message.getBytes());
-			System.out.println(" [x] Sent '" + message + "'");
+			rabbitMQ.sendMessage("hello");
+			System.in.read();
 		}
 	}
 }
