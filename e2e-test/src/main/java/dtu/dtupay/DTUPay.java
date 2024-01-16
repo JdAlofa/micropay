@@ -22,7 +22,7 @@ public class DTUPay {
 			throw new Exception("Server responded with: " + response.getStatus());
 		} else {
 			String responseBody = response.readEntity(String.class);
-			return "hello " + responseBody;
+			return responseBody;
 		}
 	}
 }

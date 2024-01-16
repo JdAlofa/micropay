@@ -1,7 +1,6 @@
 package dtu.dtupay;
 
 import dtu.dtupay.dtusimplepay.common.Customer;
-import dtu.dtupay.dtusimplepay.common.Merchant;
 import dtu.dtupay.dtusimplepay.common.Payment;
 import java.math.BigDecimal;
 import jakarta.ws.rs.core.Response;
@@ -17,13 +16,22 @@ import jakarta.ws.rs.DELETE;
 @Path("/")
 public class DTUPayResource {
 
-	private DTUPayService dtuPayService = new DTUPayService();
+	private DTUPayService dtuPayService;
+
+	public DTUPayResource() throws Exception {
+		dtuPayService = new DTUPayService();
+	}
 
 	@POST
 	@Path("/hellorabbit/{msg}")
 	@Produces(MediaType.TEXT_PLAIN)
 	public Response helloRabbit(@PathParam("msg") String msg) {
-		return Response.ok(msg, MediaType.TEXT_PLAIN).build();
+		try {
+			String res = dtuPayService.sayHello(msg);
+			return Response.ok(res, MediaType.TEXT_PLAIN).build();
+		} catch (Exception e) {
+			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+		}
 	}
 
 	@GET

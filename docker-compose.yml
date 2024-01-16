@@ -5,8 +5,18 @@ services:
     build: rest-service
     image: rest_service
     container_name: rest_service 
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
     ports:
      - 8080:8080
+    environment:
+      RABBITMQ_HOST: "rabbitmq"
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8080/q/health"]
+      interval: 5s
+      timeout: 30s
+      retries: 10
 
   rabbitmq:
     image: "rabbitmq:3.8"
@@ -16,3 +26,8 @@ services:
     environment:
       RABBITMQ_DEFAULT_USER: "joe"
       RABBITMQ_DEFAULT_PASS: "mama"
+    healthcheck:
+      test: ["CMD", "rabbitmqctl", "ping"]
+      interval: 5s
+      timeout: 30s
+      retries: 10

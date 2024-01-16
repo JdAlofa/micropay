@@ -13,8 +13,13 @@ public class RabbitMQ implements AutoCloseable {
 	private String queueName;
 
 	public RabbitMQ() throws Exception {
+		String host = "localhost";
+		String docker_host = System.getenv("RABBITMQ_HOST");
+		if (host != null) {
+			host = docker_host;
+		}
 		ConnectionFactory factory = new ConnectionFactory();
-		factory.setHost("localhost");
+		factory.setHost(host);
 		factory.setPort(5672);
 		factory.setUsername("joe");
 		factory.setPassword("mama");

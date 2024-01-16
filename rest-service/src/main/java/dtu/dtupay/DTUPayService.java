@@ -11,6 +11,11 @@ public class DTUPayService {
 	private List<String> customers = new ArrayList<>();
 	private List<String> merchants = new ArrayList<>();
 	private BankService bankService = new BankServiceService().getBankServicePort();
+	private RabbitMQ rabbitMQ;
+
+	public DTUPayService() throws Exception {
+		rabbitMQ = new RabbitMQ();
+	}
 
 	public void registerCustomer(String id) {
 		customers.add(id);
@@ -41,5 +46,10 @@ public class DTUPayService {
 		String description = "Payment from " + customerId + " to " + merchantId;
 		bankService.transferMoneyFromTo(customerId, merchantId, amount, description);
 
+	}
+
+	public String sayHello(String msg) throws Exception {
+		rabbitMQ.sendMessage("rabbit mq live");
+		return "hello " + msg;
 	}
 }

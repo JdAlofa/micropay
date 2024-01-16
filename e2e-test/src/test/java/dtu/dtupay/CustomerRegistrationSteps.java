@@ -6,6 +6,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertFalse;
 
 import java.math.BigDecimal;
+import java.util.Random;
 
 import dtu.ws.fastmoney.BankService;
 import dtu.ws.fastmoney.BankServiceException_Exception;
@@ -26,10 +27,14 @@ public class CustomerRegistrationSteps {
 
 	@Given("the user provides a name and bank account")
 	public void the_user_provides_name_and_bank_account() throws BankServiceException_Exception {
+		String randomString = new Random().ints(24, 'A', 'z' + 1)
+				.mapToObj(i -> (char) i)
+				.collect(StringBuilder::new, StringBuilder::append, StringBuilder::append)
+				.toString();
 		User user = new User();
 		user.setFirstName("Graig");
 		user.setLastName("Davis");
-		user.setCprNumber("2039sdssdfsdfkdf4823094sdjfhskdf");
+		user.setCprNumber(randomString);
 		client = new CustomerClient(
 				new Customer(bankService.createAccountWithBalance(user, BigDecimal.valueOf(400))));
 	}
