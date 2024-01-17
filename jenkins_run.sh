@@ -15,6 +15,6 @@ cd ..
 docker-compose up -d --build
 
 
-sleep 200
+sleep 20
 cd e2e-test
 mvn test
