@@ -1,5 +1,20 @@
-./run_with_docker.sh
+#!/bin/bash
+set -e
 
-sleep 10
+docker-compose down
+
+cd common
+mvn clean install
+mvn package
+
+cd ../rest-service
+mvn clean install
+mvn package
+
+cd ..
+docker-compose up -d --build
+
+
+sleep 200
 cd e2e-test
 mvn test
