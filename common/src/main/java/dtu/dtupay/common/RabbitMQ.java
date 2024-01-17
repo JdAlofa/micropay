@@ -2,6 +2,7 @@
 package dtu.dtupay.common;
 
 import java.io.IOException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import com.rabbitmq.client.*;
 
@@ -38,9 +39,11 @@ public class RabbitMQ implements AutoCloseable {
 		});
 	}
 
-	public void sendMessage(String message) throws Exception {
-		channel.basicPublish(EXCHANGE_NAME, "", null, message.getBytes());
-		System.out.println("Sent: " + message + "'");
+	public void sendMessage(Object message) throws Exception {
+		ObjectMapper mapper = new ObjectMapper();
+		String jsonMessage = mapper.writeValueAsString(message);
+		channel.basicPublish(EXCHANGE_NAME, "", null, jsonMessage.getBytes());
+		System.out.println("Sent: " + jsonMessage + "'");
 	}
 
 	@Override
