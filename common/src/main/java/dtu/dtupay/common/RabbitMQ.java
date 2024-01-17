@@ -39,6 +39,13 @@ public class RabbitMQ implements AutoCloseable {
 		});
 	}
 
+	public void declareQueue(String queueName) throws IOException {
+		this.queueName = queueName;
+		channel.queueDeclare(queueName, false, false, false, null);
+		channel.queueBind(queueName, EXCHANGE_NAME, "");
+	}
+
+
 	public void sendMessage(Object message) throws Exception {
 		ObjectMapper mapper = new ObjectMapper();
 		String jsonMessage = mapper.writeValueAsString(message);
