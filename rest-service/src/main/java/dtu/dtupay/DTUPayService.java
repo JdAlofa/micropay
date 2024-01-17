@@ -1,5 +1,6 @@
 package dtu.dtupay;
 
+import dtu.dtupay.common.RabbitMQ;
 import dtu.ws.fastmoney.BankService;
 import dtu.ws.fastmoney.BankServiceException_Exception;
 import dtu.ws.fastmoney.BankServiceService;

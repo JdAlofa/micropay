@@ -1,5 +1,5 @@
 
-package dtu.dtupay;
+package dtu.dtupay.common;
 
 import java.io.IOException;
 
