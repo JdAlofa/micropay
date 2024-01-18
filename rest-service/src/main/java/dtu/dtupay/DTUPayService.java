@@ -7,6 +7,7 @@ import dtu.ws.fastmoney.BankServiceService;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import dtu.dtupay.common.Token; 
 
 public class DTUPayService {
 	private List<String> customers = new ArrayList<>();
@@ -50,7 +51,10 @@ public class DTUPayService {
 	}
 
 	public String sayHello(String msg) throws Exception {
-		rabbitMQ.sendMessage("rabbit mq live");
+		Token token = new Token();
+		token.setId("123");
+		
+		rabbitMQ.sendMessage(token);
 		return "hello " + msg;
 	}
 }
