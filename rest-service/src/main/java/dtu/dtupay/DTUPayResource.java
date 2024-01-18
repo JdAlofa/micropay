@@ -1,7 +1,7 @@
 package dtu.dtupay;
 
-import dtu.dtupay.dtusimplepay.common.Customer;
-import dtu.dtupay.dtusimplepay.common.Payment;
+import dtu.dtupay.common.Customer;
+import dtu.dtupay.common.Payment;
 import java.math.BigDecimal;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.MediaType;

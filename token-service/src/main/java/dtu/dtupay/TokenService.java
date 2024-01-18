@@ -1,7 +1,7 @@
 package dtu.dtupay;
 
 import dtu.dtupay.common.RabbitMQ;
-import dtu.dtupay.common.Token;
+import dtu.dtupay.common.Event;
 
 import com.rabbitmq.client.DeliverCallback;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -15,7 +15,7 @@ public class TokenService {
 				System.out.println(" [x] Received '" + message + "'");
 				// Process the received message as needed
 				ObjectMapper mapper = new ObjectMapper();
-				Token token = mapper.readValue(message, Token.class);
+				Event token = mapper.readValue(message, Event.class);
 				System.out.println("Received: " + token);
 				// rabbitMQ.sendMessage(message);
 			};

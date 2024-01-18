@@ -1,4 +1,4 @@
-package dtu.dtupay.dtusimplepay.common;
+package dtu.dtupay.common;
 
 import java.math.BigDecimal;
 import jakarta.xml.bind.annotation.XmlRootElement;
