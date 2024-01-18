@@ -1,10 +1,21 @@
 package dtu.dtupay.common;
 
+import java.util.UUID;
+
 public class Event {
+	private UUID uuid;
 	private String type;
 	private String payload;
 
 	public Event() {
+	}
+
+	public UUID getUUID() {
+		return uuid;
+	}
+
+	public void setUUID(UUID uuid) {
+		this.uuid = uuid;
 	}
 
 	public String getType() {

@@ -29,15 +29,16 @@ public class DTUPayService {
 
 		DeliverCallback deliverCallback = (consumerTag, delivery) -> {
 			String message = new String(delivery.getBody(), "UTF-8");
-			System.out.println("DTUPay Received '" + message);
 
 			ObjectMapper mapper = new ObjectMapper();
 			Event event = mapper.readValue(message, Event.class);
 			String eventType = event.getType();
 			switch (eventType) {
 				case "type1":
+					CompletableFuture<String> future = pendingResults.get(event.getUUID());
 					Token token = mapper.readValue(event.getPayload(), Token.class);
 					System.out.println("Received token: " + token);
+					future.complete("hello rabbit");
 					break;
 
 				default:
@@ -90,12 +91,12 @@ public class DTUPayService {
 		ObjectMapper mapper = new ObjectMapper();
 		String jsonMessage = mapper.writeValueAsString(token);
 		Event event = new Event();
+		event.setUUID(id);
 		event.setType("type1");
 		event.setPayload(jsonMessage);
 
 		rabbitMQ.sendMessage(event);
 
-		futureResult.complete("hello " + msg);
 		return futureResult;
 	}
 }
