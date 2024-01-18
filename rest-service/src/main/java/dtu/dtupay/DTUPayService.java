@@ -8,6 +8,8 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import dtu.dtupay.common.Event;
+import dtu.dtupay.common.Token;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class DTUPayService {
 	private List<String> customers = new ArrayList<>();
@@ -51,9 +53,13 @@ public class DTUPayService {
 	}
 
 	public String sayHello(String msg) throws Exception {
+		Token token = new Token();
+		token.setId("234");
+		ObjectMapper mapper = new ObjectMapper();
+		String jsonMessage = mapper.writeValueAsString(token);
 		Event event = new Event();
 		event.setType("type1");
-		event.setPayload("payload1");
+		event.setPayload(jsonMessage);
 
 		rabbitMQ.sendMessage(event);
 		return "hello " + msg;
