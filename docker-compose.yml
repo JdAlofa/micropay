@@ -12,6 +12,16 @@ services:
      - 8080:8080
     environment:
       RABBITMQ_HOST: "rabbitmq"
+
+  token_service:
+    build: token-service
+    image: token-service
+    container_name: token-service
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    environment:
+      RABBITMQ_HOST: "rabbitmq"
     healthcheck:
       test: ["CMD", "wget", "-qO-", "http://localhost:8080/q/health"]
       interval: 5s

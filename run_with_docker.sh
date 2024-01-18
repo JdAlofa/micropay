@@ -10,5 +10,9 @@ cd ../rest-service
 mvn clean install
 mvn package
 
+cd ../token-service
+mvn clean install
+mvn package
+
 cd ..
 docker compose up -d --build

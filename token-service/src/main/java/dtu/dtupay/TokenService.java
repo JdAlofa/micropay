@@ -6,6 +6,8 @@ import dtu.dtupay.common.Event;
 import com.rabbitmq.client.DeliverCallback;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import java.util.concurrent.CountDownLatch;
+
 public class TokenService {
 
 	public static void main(String[] args) throws Exception {
@@ -21,7 +23,8 @@ public class TokenService {
 			};
 			rabbitMQ.setEventCallback(deliverCallback);
 			System.out.println("listening");
-			System.in.read();
+			CountDownLatch latch = new CountDownLatch(1);
+			latch.await();
 		} catch (Exception e) {
 			throw e;
 		}

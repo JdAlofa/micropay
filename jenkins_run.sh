@@ -11,10 +11,13 @@ cd ../rest-service
 mvn clean install
 mvn package
 
+cd ../token-service
+mvn clean install
+mvn package
+
 cd ..
 docker-compose up -d --build
 
-sleep 20
 cd e2e-test
 mvn clean install
 mvn test
