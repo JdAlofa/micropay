@@ -14,7 +14,7 @@ mvn package
 cd ..
 docker-compose up -d --build
 
-
 sleep 20
 cd e2e-test
+mvn clean install
 mvn test
