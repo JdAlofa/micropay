@@ -10,15 +10,43 @@ import java.util.List;
 import dtu.dtupay.common.Event;
 import dtu.dtupay.common.Token;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.rabbitmq.client.DeliverCallback;
+
+import java.util.concurrent.CompletableFuture;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.UUID;
 
 public class DTUPayService {
 	private List<String> customers = new ArrayList<>();
 	private List<String> merchants = new ArrayList<>();
 	private BankService bankService = new BankServiceService().getBankServicePort();
 	private RabbitMQ rabbitMQ;
+	private Map<UUID, CompletableFuture<String>> pendingResults = new HashMap<>();
 
 	public DTUPayService() throws Exception {
 		rabbitMQ = new RabbitMQ();
+
+		DeliverCallback deliverCallback = (consumerTag, delivery) -> {
+			String message = new String(delivery.getBody(), "UTF-8");
+			System.out.println("DTUPay Received '" + message);
+
+			ObjectMapper mapper = new ObjectMapper();
+			Event event = mapper.readValue(message, Event.class);
+			String eventType = event.getType();
+			switch (eventType) {
+				case "type1":
+					Token token = mapper.readValue(event.getPayload(), Token.class);
+					System.out.println("Received token: " + token);
+					break;
+
+				default:
+					System.out.println("Don't care about this type of event");
+					break;
+			}
+			// rabbitMQ.sendMessage(message);
+		};
+		rabbitMQ.setEventCallback(deliverCallback);
 	}
 
 	public void registerCustomer(String id) {
@@ -52,7 +80,11 @@ public class DTUPayService {
 
 	}
 
-	public String sayHello(String msg) throws Exception {
+	public CompletableFuture<String> sayHello(String msg) throws Exception {
+		CompletableFuture<String> futureResult = new CompletableFuture<>();
+		UUID id = UUID.randomUUID();
+		pendingResults.put(id, futureResult);
+
 		Token token = new Token();
 		token.setId("234");
 		ObjectMapper mapper = new ObjectMapper();
@@ -62,6 +94,8 @@ public class DTUPayService {
 		event.setPayload(jsonMessage);
 
 		rabbitMQ.sendMessage(event);
-		return "hello " + msg;
+
+		futureResult.complete("hello " + msg);
+		return futureResult;
 	}
 }
