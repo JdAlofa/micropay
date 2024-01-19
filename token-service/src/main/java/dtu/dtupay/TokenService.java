@@ -26,7 +26,12 @@ public class TokenService {
 
 				ObjectMapper mapper = new ObjectMapper();
 				Event event = mapper.readValue(message, Event.class);
-				String eventType = event.getType();
+				String eventType = event.getType().trim();
+
+				for (char c : eventType.toCharArray()) {
+					System.out.printf("%d ", (int) c);
+				}
+				System.out.println();
 				System.out.println("Received event: " + eventType);
 				switch (eventType) {
 
@@ -42,7 +47,7 @@ public class TokenService {
 						break;
 
 					default:
-						System.out.println("  -> Ignoring event: " + eventType);
+						System.out.println("  -> Token Service is ignoring event: " + eventType);
 						break;
 				}
 				// rabbitMQ.sendMessage(message);
