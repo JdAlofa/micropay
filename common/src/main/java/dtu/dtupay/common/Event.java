@@ -9,6 +9,7 @@ public class Event {
 	private UUID uuid;
 	private String type;
 	private String payload;
+	private int extra; // Extra information that can be sent with the event i.e. number of tokens requested
 
 	public Event() {
 	}
@@ -37,5 +38,13 @@ public class Event {
 		ObjectMapper mapper = new ObjectMapper();
 		String serializedPayload = mapper.writeValueAsString(payload);
 		this.payload = serializedPayload;
+	}
+
+	public void setExtra(int extra) {
+		this.extra = extra;
+	}
+
+	public int getExtra() {
+		return extra;
 	}
 }

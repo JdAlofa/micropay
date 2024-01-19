@@ -89,13 +89,14 @@ public class DTUPayService {
 
 	}
 
-	public CompletableFuture<String> requestTokens(String id) throws Exception {
+	public CompletableFuture<String> requestTokens(String id, int numberOfTokensRequested) throws Exception {
 		CompletableFuture<String> futureResult = new CompletableFuture<>();
 		UUID eventUUID = UUID.randomUUID();
 		Event event = new Event();
 		event.setUUID(eventUUID);
 		event.setType("TokensRequested");
 		event.setPayload(id);
+		event.setExtra(numberOfTokensRequested);
 
 		pendingResults.put(eventUUID, futureResult);
 		rabbitMQ.sendMessage(event);
@@ -103,3 +104,4 @@ public class DTUPayService {
 		return futureResult;
 	}
 }
+

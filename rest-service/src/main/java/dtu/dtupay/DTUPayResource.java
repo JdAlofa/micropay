@@ -28,11 +28,12 @@ public class DTUPayResource {
 	}
 
 	@GET
-	@Path("/tokens/{id}")
+	@Path("/tokens/{id}/{numberOfTokensRequested}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response requestTokens(@PathParam("id") String id) {
+	public Response requestTokens(@PathParam("id") String id,
+			@PathParam("numberOfTokensRequested") int numberOfTokensRequested) {
 		try {
-			CompletableFuture<String> futureResult = dtuPayService.requestTokens(id);
+			CompletableFuture<String> futureResult = dtuPayService.requestTokens(id, numberOfTokensRequested);
 			String result = futureResult.get();
 			ObjectMapper objectMapper = new ObjectMapper();
 			result = result.substring(1, result.length() - 1); // Remove the extra quotes

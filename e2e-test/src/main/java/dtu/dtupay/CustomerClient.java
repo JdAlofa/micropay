@@ -1,5 +1,7 @@
 package dtu.dtupay;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -56,9 +58,14 @@ public class CustomerClient {
 		}
 	}
 
-	public List<Token> requestTokens() throws Exception {
-		Response response = baseUrl.path("/tokens/{id}")
+	public ArrayList<Token> requestTokens(int numberOfTokensRequested) throws Exception {
+		if (numberOfTokensRequested <= 0) {
+			throw new IllegalArgumentException("Number of tokens requested must be a positive integer");
+		}
+	
+		Response response = baseUrl.path("/tokens/{id}/{numberOfTokensRequested}")
 				.resolveTemplate("id", user.getId())
+				.resolveTemplate("numberOfTokensRequested", numberOfTokensRequested)
 				.request()
 				.get();
 		if (response.getStatus() != Response.Status.OK.getStatusCode()) {
@@ -69,7 +76,7 @@ public class CustomerClient {
 			List<Token> tokenList = objectMapper.readValue(jsonResponse, new TypeReference<List<Token>>() {
 			});
 
-			return tokenList;
+			return (ArrayList<Token>) tokenList;
 		}
 	}
 }

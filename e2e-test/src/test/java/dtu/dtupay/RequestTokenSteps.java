@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -22,7 +23,7 @@ public class RequestTokenSteps {
 	CustomerClient client = new CustomerClient(new Customer("some bank account number"));
 	DTUPay dtuPay = new DTUPay();
 	Boolean tokensReceived;
-	List<Token> tokens;
+	ArrayList<Token> tokens = new ArrayList<>();
 
 	@Given("a registered user with 0 tokens")
 	public void a_registered_user_with_0_tokens() throws Exception {
@@ -40,19 +41,23 @@ public class RequestTokenSteps {
 		client.registerAccount();
 	}
 
-	@When("the user requests new tokens")
-	public void the_user_requests_new_tokens() {
+	@Given("the user uses {int} tokens")
+	public void the_user_uses_int_tokens(int numberOfTokensUsed) throws Exception {
+
+	}
+	
+	@When("the user requests {int} new tokens")
+	public void the_user_requests_new_tokens(int numberOfTokensRequested) {
 		try {
-		tokens = client.requestTokens();
-		tokensReceived = true;
+			tokens = client.requestTokens(numberOfTokensRequested);
+			tokensReceived = true;
 		} catch (Exception e) {
-		tokensReceived = false;
+			tokensReceived = false;
 		}
 	}
-
-	@Then("the user receives 5 tokens")
-	public void the_user_receives_5_tokens() {
-		assertEquals(tokens.size(), 5);
+	@Then("the user receives {int} tokens")
+	public void the_user_receives_int_tokens(int numberOfTokensReceived) {
+		assertEquals(tokens.size(), numberOfTokensReceived);
 	}
 
 	@After("@RequestTokens")
