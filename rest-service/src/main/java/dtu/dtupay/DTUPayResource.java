@@ -1,7 +1,5 @@
 package dtu.dtupay;
 
-import dtu.dtupay.common.Customer;
-import dtu.dtupay.common.Payment;
 import java.math.BigDecimal;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.MediaType;
@@ -53,15 +51,6 @@ public class DTUPayResource {
 		}
 	}
 
-	@GET
-	@Path("/customers")
-	@Produces(MediaType.APPLICATION_JSON)
-	public Customer getCustomers() {
-		var customer = new Customer("testid");
-		return customer;
-
-	}
-
 	@POST
 	@Path("/customers/{id}")
 	public Response createCustomer(@PathParam("id") String id) {
@@ -106,20 +95,4 @@ public class DTUPayResource {
 		}
 	}
 
-	@POST
-	@Path("/payments")
-	@Consumes(MediaType.APPLICATION_JSON)
-	public Response transferMoney(Payment payment) {
-
-		String customerId = payment.getCustomerId();
-		String merchantId = payment.getMerchantId();
-		BigDecimal amount = payment.getAmount();
-
-		try {
-			dtuPayService.transferMoney(customerId, merchantId, amount);
-			return Response.ok(Response.Status.OK).build();
-		} catch (Exception e) {
-			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
-		}
-	}
 }

@@ -1,8 +1,9 @@
 package dtu.dtupay;
 
-import dtu.dtupay.common.Merchant;
+import java.util.UUID;
+
 import jakarta.ws.rs.client.ClientBuilder;
-import jakarta.ws.rs.client.WebTarget; // Import the WebTarget class
+import jakarta.ws.rs.client.WebTarget;
 import jakarta.ws.rs.core.Response;
 
 public class MerchantClient {
@@ -15,8 +16,12 @@ public class MerchantClient {
 		this.user = user;
 	}
 
-	public String getUserId() {
+	public UUID getUserId() {
 		return user.getId();
+	}
+
+	public String getUserBankAccount() {
+		return user.getBankAccount();
 	}
 
 	public void registerAccount() throws Exception {

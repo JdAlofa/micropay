@@ -1,7 +1,5 @@
 package dtu.dtupay;
 
-import dtu.dtupay.common.Customer;
-
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertFalse;
 
@@ -67,7 +65,7 @@ public class CustomerRegistrationSteps {
 	@After("@CustomerRegistration")
 	public void delete_accounts() throws Exception {
 		client.deregisterAccount();
-		bankService.retireAccount(client.getUserId());
+		bankService.retireAccount(client.getUserBankAccount());
 	}
 
 }

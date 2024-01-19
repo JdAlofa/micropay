@@ -1,9 +1,6 @@
 package dtu.dtupay;
 
-import dtu.dtupay.common.Customer;
-
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertFalse;
 
 import java.math.BigDecimal;
 import java.util.Random;
@@ -19,7 +16,7 @@ import io.cucumber.java.en.When;
 public class RequestTokenSteps {
 
 	BankService bankService = new BankServiceService().getBankServicePort();
-	CustomerClient client = new CustomerClient(new Customer("test"));
+	CustomerClient client = new CustomerClient(new Customer("some bank account number"));
 	DTUPay dtuPay = new DTUPay();
 	Boolean tokensReceived;
 
@@ -57,7 +54,6 @@ public class RequestTokenSteps {
 	@After("@RequestTokens")
 	public void delete_accounts() throws Exception {
 		client.deregisterAccount();
-		bankService.retireAccount(client.getUserId());
 	}
 
 }

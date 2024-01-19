@@ -1,16 +1,12 @@
 package dtu.dtupay;
 
-import java.util.List;
 import java.util.UUID;
-import java.util.ArrayList;
-import dtu.dtupay.common.Token;
 
-public class Customer {
+public class Merchant {
 	private UUID id;
-	private List<Token> tokens = new ArrayList<Token>();
 	private String bankAccount;
 
-	public Customer(String bankAccount) {
+	public Merchant(String bankAccount) {
 		id = UUID.randomUUID();
 		this.bankAccount = bankAccount;
 	}
