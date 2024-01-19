@@ -15,13 +15,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.ArrayList;
 
-public class TokenService {
+public class AccountManagementService {
 
 	private static Map<String, Token> tokenDB = new HashMap<>();
 
 	public static void main(String[] args) throws InterruptedException {
 		Thread.sleep(10000);
-
 		try (RabbitMQ rabbitMQ = new RabbitMQ()) {
 			DeliverCallback deliverCallback = (consumerTag, delivery) -> {
 				String message = new String(delivery.getBody(), "UTF-8");
@@ -30,13 +29,13 @@ public class TokenService {
 				Event event = mapper.readValue(message, Event.class);
 				String eventType = event.getType().trim();
 
-				System.out.println("Payment Service Received event: " + eventType);
+				System.out.println("Account Management Service Received event: " + eventType);
 				switch (eventType) {
 
 					case "PaymentRequested":
-						System.out.println("  -> handling event: " + eventType);
-						String customerId = event.getPayload();
-						Event nextEvent = generateTokens(event.getUUID(), customerId);
+						System.out.println("  -> Handling event: " + eventType);
+						String rawPayment = event.getPayload();
+						Event nextEvent = validateToken(event.getUUID(), rawPayment);
 						try {
 							rabbitMQ.sendMessage(nextEvent);
 						} catch (Exception e) {
@@ -45,7 +44,7 @@ public class TokenService {
 						break;
 
 					default:
-						System.out.println("  -> ignoring event: " + eventType);
+						System.out.println("  -> Ignoring event: " + eventType);
 						break;
 				}
 			};
@@ -61,19 +60,19 @@ public class TokenService {
 		}
 	}
 
-	private static Event generateTokens(UUID eventUUID, String customerId) throws JsonProcessingException {
+	private static Event validateToken(UUID eventUUID, String customerId) throws JsonProcessingException {
 		// Customer not in token db -> first time asking for tokens
-		if (!tokenDB.containsKey(customerId)) {
-			List<Token> newTokens = new ArrayList<>();
-			for (int i = 0; i < 5; i++) {
-				newTokens.add(new Token());
-			}
-			Event event = new Event();
-			event.setUUID(eventUUID);
-			event.setType("TokensGenerated");
-			event.setPayload(newTokens);
-			return event;
-		}
+		// if (!tokenDB.containsKey(customerId)) {
+		// List<Token> newTokens = new ArrayList<>();
+		// for (int i = 0; i < 5; i++) {
+		// newTokens.add(new Token());
+		// }
+		// Event event = new Event();
+		// event.setUUID(eventUUID);
+		// event.setType("TokensGenerated");
+		// event.setPayload(newTokens);
+		// return event;
+		// }
 		Event event = new Event();
 		event.setUUID(eventUUID);
 		event.setType("TokenGenerationDenied");

@@ -15,13 +15,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.ArrayList;
 
-public class TokenService {
+public class PaymentService {
 
 	private static Map<String, Token> tokenDB = new HashMap<>();
 
 	public static void main(String[] args) throws InterruptedException {
 		Thread.sleep(10000);
-
 		try (RabbitMQ rabbitMQ = new RabbitMQ()) {
 			DeliverCallback deliverCallback = (consumerTag, delivery) -> {
 				String message = new String(delivery.getBody(), "UTF-8");
@@ -34,7 +33,7 @@ public class TokenService {
 				switch (eventType) {
 
 					case "PaymentRequested":
-						System.out.println("  -> handling event: " + eventType);
+						System.out.println("  -> Handling event: " + eventType);
 						String customerId = event.getPayload();
 						Event nextEvent = generateTokens(event.getUUID(), customerId);
 						try {
@@ -45,7 +44,7 @@ public class TokenService {
 						break;
 
 					default:
-						System.out.println("  -> ignoring event: " + eventType);
+						System.out.println("  -> Ignoring event: " + eventType);
 						break;
 				}
 			};
@@ -63,17 +62,17 @@ public class TokenService {
 
 	private static Event generateTokens(UUID eventUUID, String customerId) throws JsonProcessingException {
 		// Customer not in token db -> first time asking for tokens
-		if (!tokenDB.containsKey(customerId)) {
-			List<Token> newTokens = new ArrayList<>();
-			for (int i = 0; i < 5; i++) {
-				newTokens.add(new Token());
-			}
-			Event event = new Event();
-			event.setUUID(eventUUID);
-			event.setType("TokensGenerated");
-			event.setPayload(newTokens);
-			return event;
-		}
+		// if (!tokenDB.containsKey(customerId)) {
+		// List<Token> newTokens = new ArrayList<>();
+		// for (int i = 0; i < 5; i++) {
+		// newTokens.add(new Token());
+		// }
+		// Event event = new Event();
+		// event.setUUID(eventUUID);
+		// event.setType("TokensGenerated");
+		// event.setPayload(newTokens);
+		// return event;
+		// }
 		Event event = new Event();
 		event.setUUID(eventUUID);
 		event.setType("TokenGenerationDenied");

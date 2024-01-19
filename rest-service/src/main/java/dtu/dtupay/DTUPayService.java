@@ -9,7 +9,10 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import dtu.dtupay.common.Event;
+import dtu.dtupay.common.PaymentRequestPayload;
 import dtu.dtupay.common.Token;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rabbitmq.client.DeliverCallback;
 
@@ -101,5 +104,20 @@ public class DTUPayService {
 		rabbitMQ.sendMessage(event);
 
 		return futureResult;
+	}
+
+	public CompletableFuture<String> requestPayment(PaymentRequestPayload payment) throws Exception {
+		CompletableFuture<String> futureResult = new CompletableFuture<>();
+		UUID eventUUID = UUID.randomUUID();
+		Event event = new Event();
+		event.setUUID(eventUUID);
+		event.setType("PaymentRequested");
+		event.setPayload(payment);
+
+		pendingResults.put(eventUUID, futureResult);
+		rabbitMQ.sendMessage(event);
+
+		return futureResult;
+
 	}
 }

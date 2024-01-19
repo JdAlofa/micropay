@@ -3,12 +3,15 @@ package dtu.dtupay;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.DELETE;
 import java.util.ArrayList;
+
+import dtu.dtupay.common.PaymentRequestPayload;
 import dtu.dtupay.common.Token;
 import org.apache.commons.text.StringEscapeUtils;
 
@@ -56,6 +59,27 @@ public class DTUPayResource {
 		} else {
 			dtuPayService.registerCustomer(id);
 			return Response.status(Response.Status.OK).entity("Customer registered successfully").build();
+		}
+	}
+
+	@POST
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Path("/payments")
+	public Response createPayment(PaymentRequestPayload payment) {
+		try {
+			CompletableFuture<String> futureResult = dtuPayService.requestPayment(payment);
+			String result = futureResult.get();
+			ObjectMapper objectMapper = new ObjectMapper();
+			Boolean success = objectMapper.readValue(result, Boolean.class);
+
+			if (success) {
+				return Response.ok("payment successful", MediaType.APPLICATION_JSON).build();
+			} else {
+				return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+			}
+		} catch (Exception e) {
+			System.out.println(e);
+			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
 		}
 	}
 
