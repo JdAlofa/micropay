@@ -27,7 +27,6 @@ public class RequestTokenSteps {
 
 	@Given("a registered user with 0 tokens")
 	public void a_registered_user_with_0_tokens() throws Exception {
-		// TODO: remove randomString when everything is said and done!
 		String randomString = new Random().ints(24, 'A', 'z' + 1)
 				.mapToObj(i -> (char) i)
 				.collect(StringBuilder::new, StringBuilder::append, StringBuilder::append)
@@ -41,10 +40,6 @@ public class RequestTokenSteps {
 		client.registerAccount();
 	}
 
-	@Given("the user uses {int} tokens")
-	public void the_user_uses_int_tokens(int numberOfTokensUsed) throws Exception {
-
-	}
 	
 	@When("the user requests {int} new tokens")
 	public void the_user_requests_new_tokens(int numberOfTokensRequested) {

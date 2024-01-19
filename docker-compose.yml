@@ -38,6 +38,16 @@ services:
     environment:
       RABBITMQ_HOST: "rabbitmq"
 
+  account-management-service:
+      build: account-management-service
+      image: account-management-service
+      container_name: account-management-service
+      depends_on:
+        rabbitmq:
+          condition: service_healthy
+      environment:
+        RABBITMQ_HOST: "rabbitmq"
+
   rabbitmq:
     image: "rabbitmq:3.8"
     ports:
