@@ -20,7 +20,13 @@ public class TokenService {
 	private static Map<String, Token> tokenDB = new HashMap<>();
 
 	public static void main(String[] args) {
-		try (RabbitMQ rabbitMQ = new RabbitMQ()) {
+		try {
+			// Sleep for 10 seconds
+			Thread.sleep(10000);
+		} catch (InterruptedException e) {
+			// Handle exception
+			e.printStackTrace();
+		}		try (RabbitMQ rabbitMQ = new RabbitMQ()) {
 			DeliverCallback deliverCallback = (consumerTag, delivery) -> {
 				String message = new String(delivery.getBody(), "UTF-8");
 
@@ -28,15 +34,15 @@ public class TokenService {
 				Event event = mapper.readValue(message, Event.class);
 				String eventType = event.getType().trim();
 
-				for (char c : eventType.toCharArray()) {
-					System.out.printf("%d ", (int) c);
-				}
-				System.out.println();
-				System.out.println("Received event: " + eventType);
+				// for (char c : eventType.toCharArray()) {
+				// 	System.out.printf("%d ", (int) c);
+				// }
+				// System.out.println();
+				System.out.println(" Token Service Received event: " + eventType);
 				switch (eventType) {
 
 					case "TokensRequested":
-						System.out.println("  -> Handling event: " + eventType);
+						System.out.println("  -> Token Service is handling event: " + eventType);
 						String customerId = event.getPayload();
 						Event nextEvent = generateTokens(event.getUUID(), customerId);
 						try {

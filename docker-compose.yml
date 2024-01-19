@@ -27,6 +27,7 @@ services:
         condition: service_healthy
     environment:
       RABBITMQ_HOST: "rabbitmq"
+    stop_grace_period: 1m
 
   rabbitmq:
     image: "rabbitmq:3.8"
