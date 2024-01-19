@@ -15,12 +15,11 @@ public class TokenService {
 		try (RabbitMQ rabbitMQ = new RabbitMQ()) {
 			DeliverCallback deliverCallback = (consumerTag, delivery) -> {
 				String message = new String(delivery.getBody(), "UTF-8");
-				System.out.println(" [x] Received '" + message + "'");
 
 				ObjectMapper mapper = new ObjectMapper();
 				Event event = mapper.readValue(message, Event.class);
 				String eventType = event.getType();
-				System.out.println(eventType);
+				System.out.println("Received event: " + eventType);
 				switch (eventType) {
 					case "type1":
 						Token token = mapper.readValue(event.getPayload(), Token.class);
@@ -28,10 +27,9 @@ public class TokenService {
 						break;
 
 					case "TokensRequested":
-						System.out.println("handling token request event");
+						System.out.println("Handling event: " + eventType);
 						// String customerId = mapper.readValue(event.getPayload(), String.class);
 						String customerId = event.getPayload();
-						System.out.println("Received token request for customer: " + customerId);
 						// functions with business logic returning an event
 						Event generatedTokenEvent = new Event();
 						generatedTokenEvent.setUUID(event.getUUID());
@@ -45,7 +43,7 @@ public class TokenService {
 						break;
 
 					default:
-						System.out.println("Don't care about this type of event");
+						System.out.println("Ignoring event: " + eventType);
 						break;
 				}
 				// rabbitMQ.sendMessage(message);

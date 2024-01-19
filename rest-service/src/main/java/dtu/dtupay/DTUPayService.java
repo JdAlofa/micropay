@@ -34,6 +34,7 @@ public class DTUPayService {
 			Event event = mapper.readValue(message, Event.class);
 			String eventType = event.getType();
 			CompletableFuture<String> future;
+			System.out.println("Received event: " + eventType);
 			switch (eventType) {
 				case "type1":
 					future = pendingResults.get(event.getUUID());
@@ -42,12 +43,13 @@ public class DTUPayService {
 					break;
 
 				case "TokensGenerated":
+					System.out.println("Handling event: " + eventType);
 					future = pendingResults.get(event.getUUID());
 					String token = event.getPayload();
 					future.complete(token);
 
 				default:
-					System.out.println("Don't care about this type of event");
+					System.out.println("Ignoring event: " + eventType);
 					break;
 			}
 		};

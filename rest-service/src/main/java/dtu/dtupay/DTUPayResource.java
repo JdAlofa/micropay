@@ -43,8 +43,6 @@ public class DTUPayResource {
 		try {
 			CompletableFuture<String> futureResult = dtuPayService.requestTokens(id);
 			String result = futureResult.get();
-
-			System.out.println(result);
 			return Response.ok(result, MediaType.TEXT_PLAIN).build();
 		} catch (Exception e) {
 			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();

@@ -45,12 +45,10 @@ public class RabbitMQ implements AutoCloseable {
 		channel.queueBind(queueName, EXCHANGE_NAME, "");
 	}
 
-
 	public void sendMessage(Object message) throws Exception {
 		ObjectMapper mapper = new ObjectMapper();
 		String jsonMessage = mapper.writeValueAsString(message);
 		channel.basicPublish(EXCHANGE_NAME, "", null, jsonMessage.getBytes());
-		System.out.println("Sent: " + jsonMessage + "'");
 	}
 
 	@Override
@@ -63,16 +61,4 @@ public class RabbitMQ implements AutoCloseable {
 		}
 	}
 
-	public static void main(String[] args) throws Exception {
-		try (RabbitMQ rabbitMQ = new RabbitMQ()) {
-
-			rabbitMQ.setEventCallback((consumerTag, delivery) -> {
-				String receivedMessage = new String(delivery.getBody(), "UTF-8");
-				System.out.println(" [x] Received '" + receivedMessage + "'");
-			});
-
-			rabbitMQ.sendMessage("hello");
-			System.in.read();
-		}
-	}
 }
