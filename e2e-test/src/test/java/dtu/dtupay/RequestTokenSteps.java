@@ -1,10 +1,13 @@
 package dtu.dtupay;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Random;
 
+import dtu.dtupay.common.Token;
 import dtu.ws.fastmoney.BankService;
 import dtu.ws.fastmoney.BankServiceService;
 import dtu.ws.fastmoney.User;
@@ -19,6 +22,7 @@ public class RequestTokenSteps {
 	CustomerClient client = new CustomerClient(new Customer("some bank account number"));
 	DTUPay dtuPay = new DTUPay();
 	Boolean tokensReceived;
+	List<Token> tokens;
 
 	@Given("a registered user with 0 tokens")
 	public void a_registered_user_with_0_tokens() throws Exception {
@@ -39,7 +43,7 @@ public class RequestTokenSteps {
 	@When("the user requests new tokens")
 	public void the_user_requests_new_tokens() {
 		try {
-			client.requestTokens();
+			tokens = client.requestTokens();
 			tokensReceived = true;
 		} catch (Exception e) {
 			tokensReceived = false;
@@ -48,7 +52,7 @@ public class RequestTokenSteps {
 
 	@Then("the user receives 5 tokens")
 	public void the_user_receives_5_tokens() {
-		assertTrue(tokensReceived);
+		assertEquals(tokens.size(), 5);
 	}
 
 	@After("@RequestTokens")

@@ -22,4 +22,12 @@ public class Customer {
 	public String getBankAccount() {
 		return bankAccount;
 	}
+
+	public void setTokens(List<Token> tokens) {
+		this.tokens = tokens;
+	}
+
+	public List<Token> getTokens(List<Token> tokens) {
+		return tokens;
+	}
 }

@@ -1,16 +1,13 @@
 package dtu.dtupay;
 
-import java.math.BigDecimal;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.MediaType;
-import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.DELETE;
-import java.util.List;
 import java.util.ArrayList;
 import dtu.dtupay.common.Token;
 import org.apache.commons.text.StringEscapeUtils;
@@ -37,20 +34,13 @@ public class DTUPayResource {
 		try {
 			CompletableFuture<String> futureResult = dtuPayService.requestTokens(id);
 			String result = futureResult.get();
-			System.out.println(result);
 			ObjectMapper objectMapper = new ObjectMapper();
 			result = result.substring(1, result.length() - 1); // Remove the extra quotes
 
 			String unescapedResult = StringEscapeUtils.unescapeJava(result);
 			ArrayList<Token> tokenList = objectMapper.readValue(unescapedResult, new TypeReference<ArrayList<Token>>() {
 			});
-			// ArrayList<Token> tokenList = objectMapper.readValue(result, new
-			// TypeReference<ArrayList<Token>>() {
-			// });
-			// List<Token> tokenList = objectMapper.readValue(result,
-			// objectMapper.getTypeFactory().constructCollectionType(List.class,
-			// Token.class));
-			System.out.println(tokenList);
+
 			return Response.ok(tokenList, MediaType.APPLICATION_JSON).build();
 		} catch (Exception e) {
 			System.out.println(e);

@@ -1,7 +1,12 @@
 package dtu.dtupay;
 
+import java.util.List;
 import java.util.UUID;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import dtu.dtupay.common.Token;
 import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.WebTarget;
 import jakarta.ws.rs.core.Response;
@@ -44,7 +49,7 @@ public class CustomerClient {
 		}
 	}
 
-	public void requestTokens() throws Exception {
+	public List<Token> requestTokens() throws Exception {
 		Response response = baseUrl.path("/tokens/{id}")
 				.resolveTemplate("id", user.getId())
 				.request()
@@ -52,8 +57,12 @@ public class CustomerClient {
 		if (response.getStatus() != Response.Status.OK.getStatusCode()) {
 			throw new Exception("Server responded with: " + response.getStatus());
 		} else {
-			System.out.println(response.readEntity(String.class));
-		}
+			String jsonResponse = response.readEntity(String.class);
+			ObjectMapper objectMapper = new ObjectMapper();
+			List<Token> tokenList = objectMapper.readValue(jsonResponse, new TypeReference<List<Token>>() {
+			});
 
+			return tokenList;
+		}
 	}
 }

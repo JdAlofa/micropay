@@ -102,20 +102,4 @@ public class DTUPayService {
 
 		return futureResult;
 	}
-
-	// public CompletableFuture<String> sayHello(String msg) throws Exception {
-	// CompletableFuture<String> futureResult = new CompletableFuture<>();
-	// UUID id = UUID.randomUUID();
-	// pendingResults.put(id, futureResult);
-	//
-	// Token token = new Token();
-	// Event event = new Event();
-	// event.setUUID(id);
-	// event.setType("type1");
-	// event.setPayload(token);
-	//
-	// rabbitMQ.sendMessage(event);
-	//
-	// return futureResult;
-	// }
 }
