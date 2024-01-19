@@ -3,6 +3,7 @@ package dtu.dtupay;
 import dtu.dtupay.common.RabbitMQ;
 import dtu.dtupay.common.Event;
 import dtu.dtupay.common.Token;
+import dtu.dtupay.common.PaymentRequestPayload;
 
 import com.rabbitmq.client.DeliverCallback;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -14,6 +15,8 @@ import java.util.UUID;
 import java.util.HashMap;
 import java.util.List;
 import java.util.ArrayList;
+import java.math.BigDecimal;
+
 
 public class PaymentService {
 
@@ -32,16 +35,19 @@ public class PaymentService {
 				System.out.println("Payment Service Received event: " + eventType);
 				switch (eventType) {
 
-					case "PaymentRequested":
-						System.out.println("  -> Payment service is handling event: " + eventType);
-						Event payloadedEvent =  new Event();
-						Event nextEvent = generateTokens(event.getUUID(), customerId);
-						try {
-							rabbitMQ.sendMessage(nextEvent);
-						} catch (Exception e) {
-							e.printStackTrace();
-						}
-						break;
+					// case "PaymentRequested":
+					// 	System.out.println("  -> Payment service is handling event: " + eventType);
+					// 	PaymentRequestPayload payload = mapper.readValue(event.getPayload(), PaymentRequestPayload.class);
+					// 	String TokenId = payload.getId();
+					// 	BigDecimal amount = payload.getAmount();
+					// 	Event paymentEvent = payment(TokenId, amount);
+
+					// 	try {
+					// 		rabbitMQ.sendMessage(event);
+					// 	} catch (Exception e) {
+					// 		e.printStackTrace();
+					// 	}
+					// 	break;
 
 					default:
 						System.out.println("  -> Ignoring event: " + eventType);
@@ -60,4 +66,11 @@ public class PaymentService {
 		}
 	}
 
+
+
+	public static void payment(String customerId, BigDecimal amount) {
+
+
+
+}
 }

@@ -32,16 +32,16 @@ public class AccountManagementService {
 				System.out.println("Account Management Service Received event: " + eventType);
 				switch (eventType) {
 
-					case "PaymentRequested":
-						System.out.println("  -> Handling event: " + eventType);
-						String rawPayment = event.getPayload();
-						Event nextEvent = validateToken(event.getUUID(), rawPayment);
-						try {
-							rabbitMQ.sendMessage(nextEvent);
-						} catch (Exception e) {
-							e.printStackTrace();
-						}
-						break;
+					// case "PaymentRequested":
+					// 	System.out.println("  -> Handling event: " + eventType);
+					// 	String rawPayment = event.getPayload();
+					// 	Event nextEvent = validateToken(event.getUUID(), rawPayment);
+					// 	try {
+					// 		rabbitMQ.sendMessage(nextEvent);
+					// 	} catch (Exception e) {
+					// 		e.printStackTrace();
+					// 	}
+					// 	break;
 
 					default:
 						System.out.println("  -> Ignoring event: " + eventType);
@@ -60,23 +60,5 @@ public class AccountManagementService {
 		}
 	}
 
-	private static Event validateToken(UUID eventUUID, String customerId) throws JsonProcessingException {
-		// Customer not in token db -> first time asking for tokens
-		// if (!tokenDB.containsKey(customerId)) {
-		// List<Token> newTokens = new ArrayList<>();
-		// for (int i = 0; i < 5; i++) {
-		// newTokens.add(new Token());
-		// }
-		// Event event = new Event();
-		// event.setUUID(eventUUID);
-		// event.setType("TokensGenerated");
-		// event.setPayload(newTokens);
-		// return event;
-		// }
-		Event event = new Event();
-		event.setUUID(eventUUID);
-		event.setType("TokenGenerationDenied");
-		event.setPayload("Not allowed more tokens");
-		return event;
-	}
+
 }
