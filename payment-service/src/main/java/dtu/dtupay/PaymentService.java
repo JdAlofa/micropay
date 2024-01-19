@@ -33,8 +33,8 @@ public class PaymentService {
 				switch (eventType) {
 
 					case "PaymentRequested":
-						System.out.println("  -> Handling event: " + eventType);
-						String customerId = event.getPayload();
+						System.out.println("  -> Payment service is handling event: " + eventType);
+						Event payloadedEvent =  new Event();
 						Event nextEvent = generateTokens(event.getUUID(), customerId);
 						try {
 							rabbitMQ.sendMessage(nextEvent);
@@ -60,23 +60,4 @@ public class PaymentService {
 		}
 	}
 
-	private static Event generateTokens(UUID eventUUID, String customerId) throws JsonProcessingException {
-		// Customer not in token db -> first time asking for tokens
-		// if (!tokenDB.containsKey(customerId)) {
-		// List<Token> newTokens = new ArrayList<>();
-		// for (int i = 0; i < 5; i++) {
-		// newTokens.add(new Token());
-		// }
-		// Event event = new Event();
-		// event.setUUID(eventUUID);
-		// event.setType("TokensGenerated");
-		// event.setPayload(newTokens);
-		// return event;
-		// }
-		Event event = new Event();
-		event.setUUID(eventUUID);
-		event.setType("TokenGenerationDenied");
-		event.setPayload("Not allowed more tokens");
-		return event;
-	}
 }
