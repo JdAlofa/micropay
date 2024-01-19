@@ -33,6 +33,8 @@ public class TokenService {
 				ObjectMapper mapper = new ObjectMapper();
 				Event event = mapper.readValue(message, Event.class);
 				String eventType = event.getType().trim();
+
+				
 				System.out.println(" Token Service Received event: " + eventType);
 				switch (eventType) {
 
