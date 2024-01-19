@@ -1,26 +1,29 @@
 package dtu.dtupay.common;
 
+import java.util.UUID;
+
 public class Token {
-	private String id; // Token identifier
-	private Boolean used;
+	private UUID id; // Token identifier
+	private Boolean valid;
 
 	public Token() {
-		this.used = false;
+		this.valid = true;
+		this.id = UUID.randomUUID();
 	}
 
-	public String getId() {
+	public UUID getId() {
 		return id;
 	}
 
-	public void setId(String id) {
+	public void setId(UUID id) {
 		this.id = id;
 	}
 
-	public boolean isUsed() {
-		return used;
+	public boolean getValid() {
+		return valid;
 	}
 
-	public void setUsed(Boolean used) {
-		this.used = used;
+	public void setValid(Boolean valid) {
+		this.valid = valid;
 	}
 }

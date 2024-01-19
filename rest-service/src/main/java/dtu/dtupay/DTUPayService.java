@@ -1,6 +1,7 @@
 package dtu.dtupay;
 
 import dtu.dtupay.common.RabbitMQ;
+import dtu.dtupay.common.TokenGenerationPayload;
 import dtu.ws.fastmoney.BankService;
 import dtu.ws.fastmoney.BankServiceException_Exception;
 import dtu.ws.fastmoney.BankServiceService;
@@ -36,20 +37,21 @@ public class DTUPayService {
 			CompletableFuture<String> future;
 			System.out.println("Received event: " + eventType);
 			switch (eventType) {
-				case "type1":
-					future = pendingResults.get(event.getUUID());
-					Token token_test = mapper.readValue(event.getPayload(), Token.class);
-					future.complete("hello rabbit");
-					break;
+				// case "type1":
+				// future = pendingResults.get(event.getUUID());
+				// Token token_test = mapper.readValue(event.getPayload(), Token.class);
+				// future.complete("hello rabbit");
+				// break;
 
 				case "TokensGenerated":
-					System.out.println("Handling event: " + eventType);
+					System.out.println("  -> Handling event: " + eventType);
 					future = pendingResults.get(event.getUUID());
-					String token = event.getPayload();
-					future.complete(token);
+					String tokens = event.getPayload();
+					future.complete(tokens);
+					break;
 
 				default:
-					System.out.println("Ignoring event: " + eventType);
+					System.out.println("  -> Ignoring event: " + eventType);
 					break;
 			}
 		};
@@ -101,22 +103,19 @@ public class DTUPayService {
 		return futureResult;
 	}
 
-	public CompletableFuture<String> sayHello(String msg) throws Exception {
-		CompletableFuture<String> futureResult = new CompletableFuture<>();
-		UUID id = UUID.randomUUID();
-		pendingResults.put(id, futureResult);
-
-		Token token = new Token();
-		token.setId("234");
-		ObjectMapper mapper = new ObjectMapper();
-		String jsonMessage = mapper.writeValueAsString(token);
-		Event event = new Event();
-		event.setUUID(id);
-		event.setType("type1");
-		event.setPayload(jsonMessage);
-
-		rabbitMQ.sendMessage(event);
-
-		return futureResult;
-	}
+	// public CompletableFuture<String> sayHello(String msg) throws Exception {
+	// CompletableFuture<String> futureResult = new CompletableFuture<>();
+	// UUID id = UUID.randomUUID();
+	// pendingResults.put(id, futureResult);
+	//
+	// Token token = new Token();
+	// Event event = new Event();
+	// event.setUUID(id);
+	// event.setType("type1");
+	// event.setPayload(token);
+	//
+	// rabbitMQ.sendMessage(event);
+	//
+	// return futureResult;
+	// }
 }

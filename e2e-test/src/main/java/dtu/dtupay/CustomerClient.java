@@ -51,6 +51,8 @@ public class CustomerClient {
 				.get();
 		if (response.getStatus() != Response.Status.OK.getStatusCode()) {
 			throw new Exception("Server responded with: " + response.getStatus());
+		} else {
+			System.out.println(response.readEntity(String.class));
 		}
 
 	}

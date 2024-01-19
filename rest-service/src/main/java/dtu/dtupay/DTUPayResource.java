@@ -10,8 +10,14 @@ import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.DELETE;
+import java.util.List;
+import java.util.ArrayList;
+import dtu.dtupay.common.Token;
+import com.fasterxml.jackson.core.type.TypeReference;
 
 import java.util.concurrent.CompletableFuture;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Path("/")
 public class DTUPayResource {
@@ -22,29 +28,24 @@ public class DTUPayResource {
 		dtuPayService = new DTUPayService();
 	}
 
-	@POST
-	@Path("/hellorabbit/{msg}")
-	@Produces(MediaType.TEXT_PLAIN)
-	public Response helloRabbit(@PathParam("msg") String msg) {
-		try {
-			CompletableFuture<String> futureResult = dtuPayService.sayHello(msg);
-			String result = futureResult.get();
-
-			return Response.ok(result, MediaType.TEXT_PLAIN).build();
-		} catch (Exception e) {
-			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
-		}
-	}
-
 	@GET
 	@Path("/tokens/{id}")
-	@Produces(MediaType.TEXT_PLAIN)
+	@Produces(MediaType.APPLICATION_JSON)
 	public Response requestTokens(@PathParam("id") String id) {
 		try {
 			CompletableFuture<String> futureResult = dtuPayService.requestTokens(id);
 			String result = futureResult.get();
-			return Response.ok(result, MediaType.TEXT_PLAIN).build();
+			System.out.println(result);
+			ObjectMapper objectMapper = new ObjectMapper();
+			ArrayList<Token> tokenList = objectMapper.readValue(result, new TypeReference<ArrayList<Token>>() {
+			});
+			// List<Token> tokenList = objectMapper.readValue(result,
+			// objectMapper.getTypeFactory().constructCollectionType(List.class,
+			// Token.class));
+			System.out.println(tokenList);
+			return Response.ok(tokenList, MediaType.APPLICATION_JSON).build();
 		} catch (Exception e) {
+			System.out.println(e);
 			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
 		}
 	}

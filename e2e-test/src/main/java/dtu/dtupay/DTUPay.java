@@ -13,16 +13,4 @@ public class DTUPay {
 		baseUrl = client.target("http://localhost:8080/");
 	}
 
-	public String sayHelloToRabbit(String msg) throws Exception {
-		Response response = baseUrl.path("/hellorabbit/{msg}")
-				.resolveTemplate("msg", msg)
-				.request()
-				.post(null);
-		if (response.getStatus() != Response.Status.OK.getStatusCode()) {
-			throw new Exception("Server responded with: " + response.getStatus());
-		} else {
-			String responseBody = response.readEntity(String.class);
-			return responseBody;
-		}
-	}
 }

@@ -5,11 +5,19 @@ import dtu.dtupay.common.Event;
 import dtu.dtupay.common.Token;
 
 import com.rabbitmq.client.DeliverCallback;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.concurrent.CountDownLatch;
+import java.util.Map;
+import java.util.UUID;
+import java.util.HashMap;
+import java.util.List;
+import java.util.ArrayList;
 
 public class TokenService {
+
+	private static Map<String, Token> tokenDB = new HashMap<>();
 
 	public static void main(String[] args) {
 		try (RabbitMQ rabbitMQ = new RabbitMQ()) {
@@ -21,29 +29,20 @@ public class TokenService {
 				String eventType = event.getType();
 				System.out.println("Received event: " + eventType);
 				switch (eventType) {
-					case "type1":
-						Token token = mapper.readValue(event.getPayload(), Token.class);
-						System.out.println("Received token: " + token);
-						break;
 
 					case "TokensRequested":
-						System.out.println("Handling event: " + eventType);
-						// String customerId = mapper.readValue(event.getPayload(), String.class);
+						System.out.println("  -> Handling event: " + eventType);
 						String customerId = event.getPayload();
-						// functions with business logic returning an event
-						Event generatedTokenEvent = new Event();
-						generatedTokenEvent.setUUID(event.getUUID());
-						generatedTokenEvent.setType("TokensGenerated");
-						generatedTokenEvent.setPayload("THIS IS A NEW TOKEN");
+						Event nextEvent = generateTokens(event.getUUID(), customerId);
 						try {
-							rabbitMQ.sendMessage(generatedTokenEvent);
+							rabbitMQ.sendMessage(nextEvent);
 						} catch (Exception e) {
 							e.printStackTrace();
 						}
 						break;
 
 					default:
-						System.out.println("Ignoring event: " + eventType);
+						System.out.println("  -> Ignoring event: " + eventType);
 						break;
 				}
 				// rabbitMQ.sendMessage(message);
@@ -58,5 +57,25 @@ public class TokenService {
 		} catch (Exception e) {
 			System.out.println(e);
 		}
+	}
+
+	private static Event generateTokens(UUID eventUUID, String customerId) throws JsonProcessingException {
+		// Customer not in token db -> first time asking for tokens
+		if (!tokenDB.containsKey(customerId)) {
+			List<Token> newTokens = new ArrayList<>();
+			for (int i = 0; i < 5; i++) {
+				newTokens.add(new Token());
+			}
+			Event event = new Event();
+			event.setUUID(eventUUID);
+			event.setType("TokensGenerated");
+			event.setPayload(newTokens);
+			return event;
+		}
+		Event event = new Event();
+		event.setUUID(eventUUID);
+		event.setType("TokenGenerationDenied");
+		event.setPayload("Not allowed more tokens");
+		return event;
 	}
 }
