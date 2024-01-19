@@ -63,9 +63,10 @@ public class CustomerRegistrationSteps {
 	}
 
 	@After("@CustomerRegistration")
-	public void delete_accounts() throws Exception {
+	public void clean_up() throws Exception {
 		client.deregisterAccount();
 		bankService.retireAccount(client.getUserBankAccount());
+		client.closeClient();
 	}
 
 }

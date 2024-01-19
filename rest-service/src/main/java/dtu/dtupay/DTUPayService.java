@@ -79,7 +79,7 @@ public class DTUPayService {
 	}
 
 	public void deregisterMerchant(String id) {
-		customers.remove(id);
+		merchants.remove(id);
 	}
 
 	public void transferMoney(String customerId, String merchantId, BigDecimal amount)

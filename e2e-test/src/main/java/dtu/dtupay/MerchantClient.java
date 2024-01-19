@@ -2,6 +2,7 @@ package dtu.dtupay;
 
 import java.util.UUID;
 
+import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.WebTarget;
 import jakarta.ws.rs.core.Response;
@@ -9,11 +10,17 @@ import jakarta.ws.rs.core.Response;
 public class MerchantClient {
 
 	private Merchant user;
+	private Client client;
 	WebTarget baseUrl;
 
 	public MerchantClient(Merchant user) {
+		client = ClientBuilder.newClient();
 		baseUrl = ClientBuilder.newClient().target("http://localhost:8080/");
 		this.user = user;
+	}
+
+	public void closeClient() {
+		this.client.close();
 	}
 
 	public UUID getUserId() {

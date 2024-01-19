@@ -56,8 +56,9 @@ public class RequestTokenSteps {
 	}
 
 	@After("@RequestTokens")
-	public void delete_accounts() throws Exception {
+	public void clean_up() throws Exception {
 		client.deregisterAccount();
+		client.closeClient();
 	}
 
 }
