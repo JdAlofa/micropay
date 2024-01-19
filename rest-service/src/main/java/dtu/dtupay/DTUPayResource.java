@@ -39,6 +39,21 @@ public class DTUPayResource {
 	}
 
 	@GET
+	@Path("/tokens/{id}")
+	@Produces(MediaType.TEXT_PLAIN)
+	public Response requestTokens(@PathParam("id") String id) {
+		try {
+			CompletableFuture<String> futureResult = dtuPayService.requestTokens(id);
+			String result = futureResult.get();
+
+			System.out.println(result);
+			return Response.ok(result, MediaType.TEXT_PLAIN).build();
+		} catch (Exception e) {
+			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+		}
+	}
+
+	@GET
 	@Path("/customers")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Customer getCustomers() {

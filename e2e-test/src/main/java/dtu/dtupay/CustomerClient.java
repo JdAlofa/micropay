@@ -38,4 +38,15 @@ public class CustomerClient {
 			throw new Exception("Server responded with: " + response.getStatus());
 		}
 	}
+
+	public void requestTokens() throws Exception {
+		Response response = baseUrl.path("/tokens/{id}")
+				.resolveTemplate("id", user.getId())
+				.request()
+				.get();
+		if (response.getStatus() != Response.Status.OK.getStatusCode()) {
+			throw new Exception("Server responded with: " + response.getStatus());
+		}
+
+	}
 }

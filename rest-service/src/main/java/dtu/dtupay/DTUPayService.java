@@ -33,19 +33,23 @@ public class DTUPayService {
 			ObjectMapper mapper = new ObjectMapper();
 			Event event = mapper.readValue(message, Event.class);
 			String eventType = event.getType();
+			CompletableFuture<String> future;
 			switch (eventType) {
 				case "type1":
-					CompletableFuture<String> future = pendingResults.get(event.getUUID());
-					Token token = mapper.readValue(event.getPayload(), Token.class);
-					System.out.println("Received token: " + token);
+					future = pendingResults.get(event.getUUID());
+					Token token_test = mapper.readValue(event.getPayload(), Token.class);
 					future.complete("hello rabbit");
 					break;
+
+				case "TokensGenerated":
+					future = pendingResults.get(event.getUUID());
+					String token = event.getPayload();
+					future.complete(token);
 
 				default:
 					System.out.println("Don't care about this type of event");
 					break;
 			}
-			// rabbitMQ.sendMessage(message);
 		};
 		rabbitMQ.setEventCallback(deliverCallback);
 	}
@@ -79,6 +83,20 @@ public class DTUPayService {
 		String description = "Payment from " + customerId + " to " + merchantId;
 		bankService.transferMoneyFromTo(customerId, merchantId, amount, description);
 
+	}
+
+	public CompletableFuture<String> requestTokens(String id) throws Exception {
+		CompletableFuture<String> futureResult = new CompletableFuture<>();
+		UUID eventUUID = UUID.randomUUID();
+		Event event = new Event();
+		event.setUUID(eventUUID);
+		event.setType("TokensRequested");
+		event.setPayload(id);
+
+		pendingResults.put(eventUUID, futureResult);
+		rabbitMQ.sendMessage(event);
+
+		return futureResult;
 	}
 
 	public CompletableFuture<String> sayHello(String msg) throws Exception {
